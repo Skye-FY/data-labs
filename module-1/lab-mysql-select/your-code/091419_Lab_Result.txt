@@ -1,0 +1,257 @@
+mysql> SHOW DATABASES;
++---------------------+
+| Database            |
++---------------------+
+| 091419_mysql_select |
+| demo                |
+| information_schema  |
+| lab_mysql           |
+| lab_mysql_select    |
+| mysql               |
+| performance_schema  |
+| sys                 |
++---------------------+
+8 rows in set (0.00 sec)
+
+mysql> USE lab_mysql_select;
+Database changed
+mysql> SHOW TABLES;
++----------------------------+
+| Tables_in_lab_mysql_select |
++----------------------------+
+| authors                    |
+| discounts                  |
+| employee                   |
+| jobs                       |
+| pub_info                   |
+| publishers                 |
+| roysched                   |
+| sales                      |
+| stores                     |
+| titleauthor                |
+| titles                     |
++----------------------------+
+11 rows in set (0.00 sec)
+
+mysql> CREATE TABLE challenge_1
+    ->  SELECT authors.au_id, authors.au_lname, authors.au_fname, title, pub_name
+    ->  FROM authors JOIN titleauthor
+    ->  ON authors.au_id = titleauthor.au_id
+    ->  JOIN titles
+    ->  ON titleauthor.title_id = titles.title_id
+    ->  JOIN publishers
+    ->  ON titles.pub_id = publishers.pub_id
+    ->  ;
+Query OK, 25 rows affected (0.05 sec)
+Records: 25  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM challenge_1;
++-------------+----------------+----------+-----------------------------------------------------------------+----------------------+
+| AUTHOR ID       | LAST NAME      | FIRST NAME | TITLE
+         | PUBLISHER             |
++-------------+----------------+----------+-----------------------------------------------------------------+----------------------+
+| 213-46-8915 | Green          | Marjorie | The Busy Executives Database Guide
+         | Algodata Infosystems |
+| 409-56-7008 | Bennet         | Abraham  | The Busy Executives Database Guide
+         | Algodata Infosystems |
+| 267-41-2394 | O'Leary        | Michael  | Cooking with Computers: Surreptitious Balance Sheets   
+         | Algodata Infosystems |
+| 724-80-9391 | MacFeather     | Stearns  | Cooking with Computers: Surreptitious Balance Sheets   
+         | Algodata Infosystems |
+| 213-46-8915 | Green          | Marjorie | You Can Combat Computer Stress!
+         | New Moon Books       |
+| 274-80-9391 | Straight       | Dean     | Straight Talk About Computers
+         | Algodata Infosystems |
+| 712-45-1867 | del Castillo   | Innes    | Silicon Valley Gastronomic Treats
+         | Binnet & Hardley     |
+| 722-51-5454 | DeFrance       | Michel   | The Gourmet Microwave
+         | Binnet & Hardley     |
+| 899-46-2035 | Ringer         | Anne     | The Gourmet Microwave
+         | Binnet & Hardley     |
+| 238-95-7766 | Carson         | Cheryl   | But Is It User Friendly?
+         | Algodata Infosystems |
+| 427-17-2319 | Dull           | Ann      | Secrets of Silicon Valley
+         | Algodata Infosystems |
+| 846-92-7186 | Hunter         | Sheryl   | Secrets of Silicon Valley
+         | Algodata Infosystems |
+| 486-29-1786 | Locksley       | Charlene | Net Etiquette
+         | Algodata Infosystems |
+| 724-80-9391 | MacFeather     | Stearns  | Computer Phobic AND Non-Phobic Individuals: Behavior Variations | Binnet & Hardley     |
+| 756-30-7391 | Karsen         | Livia    | Computer Phobic AND Non-Phobic Individuals: Behavior Variations | Binnet & Hardley     |
+| 899-46-2035 | Ringer         | Anne     | Is Anger the Enemy?
+         | New Moon Books       |
+| 998-72-3567 | Ringer         | Albert   | Is Anger the Enemy?
+         | New Moon Books       |
+| 998-72-3567 | Ringer         | Albert   | Life Without Fear
+         | New Moon Books       |
+| 172-32-1176 | White          | Johnson  | Prolonged Data Deprivation: Four Case Studies
+         | New Moon Books       |
+| 486-29-1786 | Locksley       | Charlene | Emotional Security: A New Algorithm
+         | New Moon Books       |
+| 807-91-6654 | Panteley       | Sylvia   | Onions, Leeks, and Garlic: Cooking Secrets of the Mediterranean | Binnet & Hardley     |
+| 648-92-1872 | Blotchet-Halls | Reginald | Fifty Years in Buckingham Palace Kitchens
+         | Binnet & Hardley     |
+| 267-41-2394 | O'Leary        | Michael  | Sushi, Anyone?
+         | Binnet & Hardley     |
+| 472-27-2349 | Gringlesby     | Burt     | Sushi, Anyone?
+         | Binnet & Hardley     |
+| 672-71-3249 | Yokomoto       | Akiko    | Sushi, Anyone?
+         | Binnet & Hardley     |
++-------------+----------------+----------+-----------------------------------------------------------------+----------------------+
+25 rows in set (0.00 sec)
+
+mysql> SELECT COUNT(titleauthor.au_id) FROM titleauthor;
++--------------------------+
+| COUNT(titleauthor.au_id) |
++--------------------------+
+|                       25 |
++--------------------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT COUNT(challenge_1.au_id) FROM challenge_1;
++--------------------------+
+| COUNT(challenge_1.au_id) |
++--------------------------+
+|                       25 |
++--------------------------+
+1 row in set (0.00 sec)
+
+mysql> CREATE TABLE challenge_2
+    ->  SELECT au_id AS 'AUTHOR ID', au_lname AS 'LAST NAME', au_fname AS 'FIRST NAME', pub_name AS 'PUBLISHER', COUNT(title) AS 'TITLE COUNT'
+    ->  FROM challenge_1
+    ->  GROUP BY au_lname, au_fname, pub_name
+    ->  ORDER BY au_id DESC, COUNT(title) DESC
+    ->  ;
+Query OK, 24 rows affected (0.05 sec)
+Records: 24  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM challenge_2;
++-------------+----------------+------------+----------------------+-------------+
+| AUTHOR ID   | LAST NAME      | FIRST NAME | PUBLISHER            | TITLE COUNT |
++-------------+----------------+------------+----------------------+-------------+
+| 998-72-3567 | Ringer         | Albert     | New Moon Books       |           2 |
+| 899-46-2035 | Ringer         | Anne       | Binnet & Hardley     |           1 |
+| 899-46-2035 | Ringer         | Anne       | New Moon Books       |           1 |
+| 846-92-7186 | Hunter         | Sheryl     | Algodata Infosystems |           1 |
+| 807-91-6654 | Panteley       | Sylvia     | Binnet & Hardley     |           1 |
+| 756-30-7391 | Karsen         | Livia      | Binnet & Hardley     |           1 |
+| 724-80-9391 | MacFeather     | Stearns    | Algodata Infosystems |           1 |
+| 724-80-9391 | MacFeather     | Stearns    | Binnet & Hardley     |           1 |
+| 722-51-5454 | DeFrance       | Michel     | Binnet & Hardley     |           1 |
+| 712-45-1867 | del Castillo   | Innes      | Binnet & Hardley     |           1 |
+| 672-71-3249 | Yokomoto       | Akiko      | Binnet & Hardley     |           1 |
+| 648-92-1872 | Blotchet-Halls | Reginald   | Binnet & Hardley     |           1 |
+| 486-29-1786 | Locksley       | Charlene   | New Moon Books       |           1 |
+| 486-29-1786 | Locksley       | Charlene   | Algodata Infosystems |           1 |
+| 472-27-2349 | Gringlesby     | Burt       | Binnet & Hardley     |           1 |
+| 427-17-2319 | Dull           | Ann        | Algodata Infosystems |           1 |
+| 409-56-7008 | Bennet         | Abraham    | Algodata Infosystems |           1 |
+| 274-80-9391 | Straight       | Dean       | Algodata Infosystems |           1 |
+| 267-41-2394 | O'Leary        | Michael    | Algodata Infosystems |           1 |
+| 267-41-2394 | O'Leary        | Michael    | Binnet & Hardley     |           1 |
+| 238-95-7766 | Carson         | Cheryl     | Algodata Infosystems |           1 |
+| 213-46-8915 | Green          | Marjorie   | Algodata Infosystems |           1 |
+| 213-46-8915 | Green          | Marjorie   | New Moon Books       |           1 |
+| 172-32-1176 | White          | Johnson    | New Moon Books       |           1 |
++-------------+----------------+------------+----------------------+-------------+
+24 rows in set (0.00 sec)
+
+mysql> SELECT COUNT(titleauthor.title_id) FROM titleauthor;
++-----------------------------+
+| COUNT(titleauthor.title_id) |
++-----------------------------+
+|                          25 |
++-----------------------------+
+1 row in set (0.01 sec)
+
+mysql> SELECT COUNT(title) FROM challenge_1;
++--------------+
+| COUNT(title) |
++--------------+
+|           25 |
++--------------+
+1 row in set (0.01 sec)
+
+CREATE TABLE challenge_3
+	->	SELECT authors.au_id AS 'AUTHOR ID', authors.au_lname AS 'LAST NAME', authors.au_fname AS 'FIRST NAME', titles.ytd_sales AS 'TOTAL'
+    ->  FROM authors JOIN titleauthor
+    ->  ON authors.au_id = titleauthor.au_id
+    ->  JOIN titles
+    ->  ON titleauthor.title_id = titles.title_id
+    ->  GROUP BY authors.au_id
+    ->  ORDER BY titles.ytd_sales DESC
+    ->  LIMIT 3
+	;
+	
+SELECT * FROM challenge_3;
++-------------+----------------+------------+-------+
+| AUTHOR ID   | LAST NAME      | FIRST NAME | TOTAL |
++-------------+----------------+------------+-------+
+| 722-51-5454 | DeFrance       | Michel     | 22246 |
+| 899-46-2035 | Ringer         | Anne       | 22246 |
+| 648-92-1872 | Blotchet-Halls | Reginald   | 15096 |
++-------------+----------------+------------+-------+
+3 rows in set (0.00 sec)
+
+CREATE TABLE challenge_4
+	->	SELECT authors.au_id AS 'AUTHOR ID', authors.au_lname AS 'LAST NAME', authors.au_fname AS 'FIRST NAME', titles.ytd_sales AS 'TOTAL'
+    ->  FROM authors JOIN titleauthor
+    ->  ON authors.au_id = titleauthor.au_id
+    ->  JOIN titles
+    ->  ON titleauthor.title_id = titles.title_id
+    ->  GROUP BY authors.au_id
+    ->  ORDER BY titles.ytd_sales DESC
+	;
+	
+SELECT * FROM challenge_4;
++-------------+----------------+------------+-------+
+| AUTHOR ID   | LAST NAME      | FIRST NAME | TOTAL |
++-------------+----------------+------------+-------+
+| 722-51-5454 | DeFrance       | Michel     | 22246 |
+| 899-46-2035 | Ringer         | Anne       | 22246 |
+| 648-92-1872 | Blotchet-Halls | Reginald   | 15096 |
+| 238-95-7766 | Carson         | Cheryl     |  8780 |
+| 213-46-8915 | Green          | Marjorie   |  4095 |
+| 409-56-7008 | Bennet         | Abraham    |  4095 |
+| 427-17-2319 | Dull           | Ann        |  4095 |
+| 472-27-2349 | Gringlesby     | Burt       |  4095 |
+| 846-92-7186 | Hunter         | Sheryl     |  4095 |
+| 672-71-3249 | Yokomoto       | Akiko      |  4095 |
+| 274-80-9391 | Straight       | Dean       |  4095 |
+| 172-32-1176 | White          | Johnson    |  4072 |
+| 267-41-2394 | O'Leary        | Michael    |  3876 |
+| 724-80-9391 | MacFeather     | Stearns    |  3876 |
+| 998-72-3567 | Ringer         | Albert     |  2045 |
+| 712-45-1867 | del Castillo   | Innes      |  2032 |
+| 756-30-7391 | Karsen         | Livia      |   375 |
+| 807-91-6654 | Panteley       | Sylvia     |   375 |
+| 486-29-1786 | Locksley       | Charlene   |  NULL |
++-------------+----------------+------------+-------+
+19 rows in set (0.00 sec)
+
+mysql> CREATE TABLE bonus_challenge
+    ->  SELECT authors.au_id AS 'AUTHOR ID', authors.au_lname AS 'LAST NAME', authors.au_fname AS 'FIRST NAME', SUM(titles.advance + (titles.royalty*titleauthor.royaltyper*titles.ytd_sales)) AS 'PROFIT'
+    ->  FROM authors JOIN titleauthor
+    ->  ON authors.au_id = titleauthor.au_id
+    ->  JOIN titles
+    ->  ON titleauthor.title_id = titles.title_id
+    ->  GROUP BY authors.au_id
+    ->  ORDER BY SUM(titles.advance + (titles.royalty*titleauthor.royaltyper*titles.ytd_sales)) DESC
+    ->  LIMIT 3;
+Query OK, 3 rows affected (0.05 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql>
+mysql> SELECT * FROM bonus_challenge;
++-------------+----------------+------------+---------------+
+| AUTHOR ID   | LAST NAME      | FIRST NAME | PROFIT        |
++-------------+----------------+------------+---------------+
+| 213-46-8915 | Green          | Marjorie   | 46585925.0000 |
+| 722-51-5454 | DeFrance       | Michel     | 40057800.0000 |
+| 648-92-1872 | Blotchet-Halls | Reginald   | 21138400.0000 |
++-------------+----------------+------------+---------------+
+3 rows in set (0.00 sec)
+
+
+
+
